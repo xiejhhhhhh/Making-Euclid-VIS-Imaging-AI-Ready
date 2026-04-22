@@ -128,7 +128,7 @@ Nearest-neighbor retrieval in embedding space:
 Making-Euclid-VIS-Imaging-AI-Ready/
 ├── analyze_embedding/
 │   └── gz_analyze_embedding_morphology_regression_official_v1.py
-├── Results/
+├── downstream_application/
 │   └── gz_analyze_embedding_fullplots_highdim_lof_linear_probe_official_dinov2.py
 │   └── gz_run_fewlabel_benchmark_fixed_loading_official_dinov2_v2_diagnostics_mlp.py
 │   └── gz_similarity_search_improved_official_dinov2_fixed.py

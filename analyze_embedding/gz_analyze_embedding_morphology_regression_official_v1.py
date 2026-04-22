@@ -2,6 +2,9 @@
 """
 gz_analyze_embedding_morphology_regression.py
 
+作者：xiejinhui
+邮箱：xiejinhui22@mails,ucas.ac.cn
+
 功能：
 1) 提取和缓存模型嵌入
 2) UMAP 2D/3D 可视化
@@ -15,6 +18,23 @@ gz_analyze_embedding_morphology_regression.py
 - 兼容 PyTorch>=2.6 的 torch.load(weights_only=True) 默认行为
 - 支持 official DINOv2 / custom DINOModel 两种模型
 - 单灰度 FITS 在 official DINOv2 模式下自动复制为 3 通道
+
+**Author:** Xiejinhui
+**Email:** [xiejinhui22@mails.ucas.ac.cn](mailto:xiejinhui22@mails.ucas.ac.cn)
+---
+## Features
+1. Extraction and caching of model embeddings
+2. UMAP visualization (2D and 3D)
+3. K-means clustering
+4. Regression probes for physical parameters
+5. Multi-class morphology classification probes
+6. Retrieval visualization examples (AI-ready workflow)
+7. Anomaly and outlier visualization examples (AI-ready workflow)
+---
+## Fixes and Improvements
+* Compatible with PyTorch ≥ 2.6 (`torch.load` default behavior with `weights_only=True`)
+* Supports both official DINOv2 models and custom DINOModel implementations
+* Automatically converts single-channel FITS images to 3-channel input when using official DINOv2 models
 """
 
 import os

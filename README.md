@@ -18,32 +18,6 @@ The project implements an **AI-ready workflow** rather than a new backbone model
 4. downstream probes for morphology and physical structure
 5. anomaly detection and retrieval in embedding space
 
-## Directory layout
-
-```text
-.
-├── scripts/
-│   ├── download_official_dinov2_backbone.py
-│   ├── gz_HQ_labels.py
-│   ├── gz_analyze_embedding_morphology_regression_official_v1.py
-│   ├── analyze_embedding_fullplots_highdim_lof_linear_probe_official_dinov2.py
-│   ├── gz_run_fewlabel_benchmark_fixed_loading_official_dinov2_v2_diagnostics_mlp.py
-│   └── gz_similarity_search_improved_official_dinov2_fixed.py
-├── docs/
-│   ├── Euclid_DinoV2VIT_ApJS.docx
-│   └── README_cutout_service_CN.md
-├── figures/
-│   ├── Figure6_fewlabel.png
-│   ├── Figure7_similarity_1.png
-│   ├── Figure8_similarity_2.png
-│   ├── Figure9_seed_dynamics.png
-│   └── Figure10_linear_vs_mlp.png
-├── configs/
-│   └── paths.example.json
-├── requirements.txt
-├── .gitignore
-└── CITATION.cff
-```
 
 ## Core scripts
 

@@ -1,81 +1,265 @@
-# Making Euclid VIS Imaging AI-Ready  
-### A Self-Supervised Foundation Model for Morphology, Data Quality, and Similarity Search
+# Making Euclid VIS Imaging AI-Ready
 
-This repository provides the official implementation accompanying the paper:
-
-**Making Euclid VIS Imaging AI-Ready: A Self-Supervised Foundation Model for Morphology, Data Quality, and Similarity Search**  
-*(submitted to ApJS)*
-
-The goal of this project is to transform Euclid VIS imaging data into an **AI-ready representation** using self-supervised learning, enabling scalable, label-free analysis of morphology, data quality, and source similarity at survey scale.
+> A methodology for transforming large-scale astronomical imaging into reusable, task-agnostic representations using Vision Transformers (DINOv2)
 
 ---
 
-## 🔭 Motivation
+## 🔭 Overview
 
-Modern astronomical surveys such as **Euclid** produce imaging data at volumes that exceed the capacity of traditional, catalog-driven analysis pipelines. While Euclid VIS delivers stable, high-resolution, space-based imaging, raw images and handcrafted catalog features are **not inherently AI-ready**.
+Modern astronomical surveys such as **Euclid** are producing imaging data at unprecedented scale. However, transforming raw survey images into scientifically usable representations remains a major bottleneck.
 
-This project addresses that gap by:
+This project presents a **complete AI-ready workflow** that bridges this gap:
 
-- Learning directly from **pixel-level Euclid VIS cutouts**
-- Avoiding **labels, catalog features, and task-specific supervision**
-- Producing a **reusable representation layer** that supports multiple downstream applications without retraining
+* From **Euclid VIS cutouts**
+* To **foundation-model embeddings (DINOv2)**
+* To **downstream scientific applications**
 
-The learned embedding is designed to serve as a **foundation representation**, not a classifier.
+including:
 
----
-
-## ✨ Key Contributions
-
-- **Self-supervised Euclid VIS foundation model**  
-  A DINO-based Vision Transformer trained on unlabeled VIS cutouts.
-
-- **Continuous morphology manifold**  
-  The learned embedding organizes sources along a smooth, non-linear manifold reflecting intrinsic morphological variation.
-
-- **AI-ready applications without retraining**  
-  - Data-driven anomaly detection  
-  - Morphology-based similarity search
-
-These applications are demonstrations of utility rather than task-optimized endpoints.
+* Few-label morphology classification
+* Anomaly detection at catalog scale
+* Similarity-based retrieval
 
 ---
 
-## 🧠 What Does “AI-ready” Mean Here?
+## 🧠 Key Idea
 
-In this work, *AI-ready* refers to:
+Instead of training a model for each task separately, we construct a **reusable representation space**:
 
-- **Standardized inputs** (fixed-size, normalized VIS cutouts)
-- **Label-free representation learning**
-- **Stable embedding space** usable across tasks
-- **Decoupling representation from downstream objectives**
+> 📌 A single embedding that supports multiple scientific analyses
 
-> **AI-ready representation ≠ downstream classifier**
+This aligns with the concept of **AI-ready data products**:
 
-The embedding is intended as a common interface between Euclid VIS data and future AI-driven science.
+* Task-agnostic
+* Scalable
+* Interpretable
 
 ---
 
-## 📦 Repository Structure
+## ⚙️ Workflow
 
-```text
-.
-├── data/
-│   └── example_cutouts/        # Example Euclid VIS cutouts (64×64)
-│
-├── preprocessing/
-│   ├── Euclid_flash_app.py     # Cutout construction & normalization
-│   └── Euclid_100k_startable.py# Quality-aware data cleaning
-│
-├── training/
-│   └── run_training.py         # DINO ViT-2 self-supervised training
-│
-├── analysis/
-│   ├── analyze_embedding.py    # UMAP / PCA projections & proxy analysis
-│   └── validate_model_outliers.py # Anomaly detection & validation
-│
+```
+Euclid Q1 catalog (Galaxy Zoo)
+        ↓
+Batch cutout pipeline (NADC)
+        ↓
+DINOv2 backbone (ViT-S/14)
+        ↓
+Embedding space (high-dimensional)
+        ↓
+Applications:
+    • Few-label classification
+    • LOF anomaly detection
+    • Similarity retrieval
+```
+
+---
+
+## 🛰️ Dataset
+
+We use the **Galaxy Zoo Euclid (Q1)** dataset:
+
+* ~378,000 galaxies
+* Morphology labels derived from Galaxy Zoo votes
+* Cross-matched with Euclid VIS imaging
+
+We further construct **high-confidence labels**:
+
+* Remove ambiguous samples
+* Retain only reliable morphological categories
+* Enable robust supervised evaluation
+
+---
+
+## 🤖 Model
+
+We use the **official DINOv2 backbone**:
+
+* Vision Transformer (ViT-S/14)
+* Pretrained on **1+ billion images**
+* Strong generalization across domains
+
+Why DINOv2?
+
+* Stable representation (no collapse)
+* Strong transfer performance
+* No need for domain-specific retraining
+
+---
+
+## 📊 Results
+
+### 🔹 Few-label classification
+
+* Only **1% labeled data**
+* Achieves **~95% accuracy**
+
+👉 Demonstrates strong representation quality
+
+---
+
+### 🔹 Anomaly detection
+
+Using LOF in embedding space:
+
+* ~1,600 outliers detected from 370k samples
+* Includes:
+
+  * Artifacts
+  * Saturated sources
+  * Cropping failures
+  * Rare morphologies
+
+---
+
+### 🔹 Similarity search
+
+Nearest-neighbor retrieval in embedding space:
+
+* Morphologically consistent results
+* Aligns with Galaxy Zoo labels
+* Works even without explicit supervision
+
+---
+
+## 📁 Project Structure
+
+```
+Making-Euclid-VIS-Imaging-AI-Ready/
+├── analyze_embedding/
+│   └── gz_analyze_embedding_morphology_regression_official_v1.py
+├── benchmark/
+│   └── gz_run_fewlabel_benchmark_fixed_loading_official_dinov2_v2_diagnostics_mlp.py
 ├── retrieval/
-│   └── similarity_search.py    # Embedding-based nearest-neighbour search
-│
-├── figures/                    # Figures used in the paper
-│
-└── README.md
+│   └── gz_similarity_search_improved_official_dinov2_fixed.py
+├── detection/
+│   └── analyze_embedding_fullplots_highdim_lof_linear_probe_official_dinov2.py
+├── labels/
+│   └── hard_labels.py
+├── models/
+│   └── download_official_dinov2_backbone.py
+├── outputs/
+├── README.md
+└── requirements.txt
+```
+
+---
+
+## 🚀 Installation
+
+```bash
+git clone https://github.com/xiejhhhhhh/Making-Euclid-VIS-Imaging-AI-Ready.git
+cd Making-Euclid-VIS-Imaging-AI-Ready
+
+pip install -r requirements.txt
+```
+
+---
+
+## ▶️ Usage
+
+### 1. Download DINOv2 backbone
+
+```bash
+python models/download_official_dinov2_backbone.py
+```
+
+---
+
+### 2. Build embedding + UMAP + regression
+
+```bash
+python analyze_embedding/gz_analyze_embedding_morphology_regression_official_v1.py
+```
+---
+
+### 3. Anomaly Detection
+
+```bash
+python detection/analyze_embedding_fullplots_highdim_lof_linear_probe_official_dinov2.py
+```
+---
+
+### 4. Few-label benchmark
+
+```bash
+python benchmark/gz_run_fewlabel_benchmark_fixed_loading_official_dinov2_v2_diagnostics_mlp.py
+```
+
+---
+
+### 5. Similarity search
+
+```bash
+python retrieval/gz_similarity_search_improved_official_dinov2_fixed.py
+```
+
+---
+
+## 🧪 Scientific Contributions
+
+This project is **not just an application**, but a **methodology**:
+
+### ✔ AI-ready data pipeline
+
+* Standardized image extraction
+* Scalable preprocessing
+* Reproducible workflow
+
+### ✔ Representation-first paradigm
+
+* Separate representation learning from tasks
+* Enable reuse across scientific problems
+
+### ✔ Minimal-label science
+
+* High performance with only 1% labels
+
+### ✔ Survey-scale analysis
+
+* Works on hundreds of thousands of galaxies
+
+---
+
+## ⚠️ Limitations
+
+* Domain-specific SSL model may collapse
+* Performance depends on image quality
+* Some rare morphologies underrepresented
+
+---
+
+## 📜 Citation
+
+If you use this work, please cite:
+
+```
+@article{euclid_ai_ready_2026,
+  title={Making Euclid VIS Imaging AI-Ready},
+  author={Xie et al.},
+  journal={ApJS},
+  year={2026}
+}
+```
+
+---
+
+## 🤝 Acknowledgements
+
+* Euclid Consortium
+* Galaxy Zoo
+* National Astronomical Data Center (NADC)
+* DINOv2 (Meta AI)
+
+---
+
+## 🌌 Final Remark
+
+This work demonstrates that:
+
+> We do not need to build new models for every task.
+> We need better representations.
+
+And once the representation is right—
+
+everything else becomes easier.

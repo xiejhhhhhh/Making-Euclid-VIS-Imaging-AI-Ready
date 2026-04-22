@@ -1,265 +1,122 @@
 # Making Euclid VIS Imaging AI-Ready
 
-> A methodology for transforming large-scale astronomical imaging into reusable, task-agnostic representations using Vision Transformers (DINOv2)
+This project packages the core code and paper materials for the study **Making Euclid VIS Imaging AI-Ready**.
+It focuses on turning Euclid VIS galaxy cutouts into a reusable embedding space using the official **DINOv2 ViT-S/14** backbone, then using that representation for:
 
----
+- morphology manifold analysis
+- physical-parameter regression probes
+- few-label morphology classification
+- LOF-based anomaly detection
+- similarity-based retrieval
 
-## 🔭 Overview
+## Project scope
 
-Modern astronomical surveys such as **Euclid** are producing imaging data at unprecedented scale. However, transforming raw survey images into scientifically usable representations remains a major bottleneck.
+The project implements an **AI-ready workflow** rather than a new backbone model:
+1. standardized Euclid VIS cutout generation and ingestion
+2. official DINOv2 checkpoint download and reuse
+3. frozen-embedding construction at survey scale
+4. downstream probes for morphology and physical structure
+5. anomaly detection and retrieval in embedding space
 
-This project presents a **complete AI-ready workflow** that bridges this gap:
+## Directory layout
 
-* From **Euclid VIS cutouts**
-* To **foundation-model embeddings (DINOv2)**
-* To **downstream scientific applications**
-
-including:
-
-* Few-label morphology classification
-* Anomaly detection at catalog scale
-* Similarity-based retrieval
-
----
-
-## 🧠 Key Idea
-
-Instead of training a model for each task separately, we construct a **reusable representation space**:
-
-> 📌 A single embedding that supports multiple scientific analyses
-
-This aligns with the concept of **AI-ready data products**:
-
-* Task-agnostic
-* Scalable
-* Interpretable
-
----
-
-## ⚙️ Workflow
-
-```
-Euclid Q1 catalog (Galaxy Zoo)
-        ↓
-Batch cutout pipeline (NADC)
-        ↓
-DINOv2 backbone (ViT-S/14)
-        ↓
-Embedding space (high-dimensional)
-        ↓
-Applications:
-    • Few-label classification
-    • LOF anomaly detection
-    • Similarity retrieval
-```
-
----
-
-## 🛰️ Dataset
-
-We use the **Galaxy Zoo Euclid (Q1)** dataset:
-
-* ~378,000 galaxies
-* Morphology labels derived from Galaxy Zoo votes
-* Cross-matched with Euclid VIS imaging
-
-We further construct **high-confidence labels**:
-
-* Remove ambiguous samples
-* Retain only reliable morphological categories
-* Enable robust supervised evaluation
-
----
-
-## 🤖 Model
-
-We use the **official DINOv2 backbone**:
-
-* Vision Transformer (ViT-S/14)
-* Pretrained on **1+ billion images**
-* Strong generalization across domains
-
-Why DINOv2?
-
-* Stable representation (no collapse)
-* Strong transfer performance
-* No need for domain-specific retraining
-
----
-
-## 📊 Results
-
-### 🔹 Few-label classification
-
-* Only **1% labeled data**
-* Achieves **~95% accuracy**
-
-👉 Demonstrates strong representation quality
-
----
-
-### 🔹 Anomaly detection
-
-Using LOF in embedding space:
-
-* ~1,600 outliers detected from 370k samples
-* Includes:
-
-  * Artifacts
-  * Saturated sources
-  * Cropping failures
-  * Rare morphologies
-
----
-
-### 🔹 Similarity search
-
-Nearest-neighbor retrieval in embedding space:
-
-* Morphologically consistent results
-* Aligns with Galaxy Zoo labels
-* Works even without explicit supervision
-
----
-
-## 📁 Project Structure
-
-```
-Making-Euclid-VIS-Imaging-AI-Ready/
-├── analyze_embedding/
-│   └── gz_analyze_embedding_morphology_regression_official_v1.py
-├── benchmark/
-│   └── gz_run_fewlabel_benchmark_fixed_loading_official_dinov2_v2_diagnostics_mlp.py
-├── retrieval/
+```text
+.
+├── scripts/
+│   ├── download_official_dinov2_backbone.py
+│   ├── gz_HQ_labels.py
+│   ├── gz_analyze_embedding_morphology_regression_official_v1.py
+│   ├── analyze_embedding_fullplots_highdim_lof_linear_probe_official_dinov2.py
+│   ├── gz_run_fewlabel_benchmark_fixed_loading_official_dinov2_v2_diagnostics_mlp.py
 │   └── gz_similarity_search_improved_official_dinov2_fixed.py
-├── detection/
-│   └── analyze_embedding_fullplots_highdim_lof_linear_probe_official_dinov2.py
-├── labels/
-│   └── hard_labels.py
-├── models/
-│   └── download_official_dinov2_backbone.py
-├── outputs/
-├── README.md
-└── requirements.txt
+├── docs/
+│   ├── Euclid_DinoV2VIT_ApJS.docx
+│   └── README_cutout_service_CN.md
+├── figures/
+│   ├── Figure6_fewlabel.png
+│   ├── Figure7_similarity_1.png
+│   ├── Figure8_similarity_2.png
+│   ├── Figure9_seed_dynamics.png
+│   └── Figure10_linear_vs_mlp.png
+├── configs/
+│   └── paths.example.json
+├── requirements.txt
+├── .gitignore
+└── CITATION.cff
 ```
 
----
+## Core scripts
 
-## 🚀 Installation
+### 1) `download_official_dinov2_backbone.py`
+Downloads the official DINOv2 model from `torch.hub` and saves a clean backbone checkpoint for reproducible use.
+
+### 2) `gz_HQ_labels.py`
+Converts probabilistic Galaxy Zoo morphology outputs into high-confidence hard labels for downstream classification.
+
+### 3) `gz_analyze_embedding_morphology_regression_official_v1.py`
+Builds DINOv2 embeddings, runs UMAP, regression probes, morphology probes, clustering, retrieval examples, and anomaly example generation.
+
+### 4) `analyze_embedding_fullplots_highdim_lof_linear_probe_official_dinov2.py`
+Produces full embedding diagnostics including 2D/3D UMAP, LOF outliers, physical-correlation plots, and outlier FITS galleries.
+
+### 5) `gz_run_fewlabel_benchmark_fixed_loading_official_dinov2_v2_diagnostics_mlp.py`
+Runs the few-label benchmark with three initialization strategies (`random`, `imagenet_dinov2`, `euclid_ssl`) and two probe heads (`linear`, `mlp`), while also logging embedding-health diagnostics.
+
+### 6) `gz_similarity_search_improved_official_dinov2_fixed.py`
+Performs morphology-aware similarity retrieval in the official DINOv2 embedding space using cosine similarity plus label/physical priors.
+
+## Environment
+
+Python 3.10+ is recommended.
+
+Install dependencies with:
 
 ```bash
-git clone https://github.com/xiejhhhhhh/Making-Euclid-VIS-Imaging-AI-Ready.git
-cd Making-Euclid-VIS-Imaging-AI-Ready
-
 pip install -r requirements.txt
 ```
 
----
+## Data and path configuration
 
-## ▶️ Usage
+Most scripts currently contain **hard-coded local Windows paths** from the research environment.
+Before running on a new machine, update:
+- `DATA_ROOT`
+- `CATALOG_PATH`
+- `MODEL_PATH`
+- `OUTPUT_DIR`
 
-### 1. Download DINOv2 backbone
+A template file is provided in `configs/paths.example.json`.
 
-```bash
-python models/download_official_dinov2_backbone.py
-```
+## Suggested execution order
 
----
+1. Prepare or verify Euclid VIS cutouts
+2. Download the official DINOv2 checkpoint
+3. Generate high-confidence labels
+4. Build embeddings and morphology/physics analyses
+5. Run few-label classification benchmarks
+6. Run similarity retrieval and anomaly analysis
 
-### 2. Build embedding + UMAP + regression
-
-```bash
-python analyze_embedding/gz_analyze_embedding_morphology_regression_official_v1.py
-```
----
-
-### 3. Anomaly Detection
-
-```bash
-python detection/analyze_embedding_fullplots_highdim_lof_linear_probe_official_dinov2.py
-```
----
-
-### 4. Few-label benchmark
+## Example workflow
 
 ```bash
-python benchmark/gz_run_fewlabel_benchmark_fixed_loading_official_dinov2_v2_diagnostics_mlp.py
+python scripts/download_official_dinov2_backbone.py
+python scripts/gz_HQ_labels.py
+python scripts/gz_analyze_embedding_morphology_regression_official_v1.py
+python scripts/gz_run_fewlabel_benchmark_fixed_loading_official_dinov2_v2_diagnostics_mlp.py
+python scripts/gz_similarity_search_improved_official_dinov2_fixed.py
 ```
 
----
+## Notes
 
-### 5. Similarity search
+- Official DINOv2 expects RGB input; the pipeline replicates grayscale Euclid VIS cutouts across 3 channels.
+- The project is built around **representation reuse**, not Euclid-specific backbone retraining.
+- The Euclid SSL comparison is kept for diagnostic and discussion purposes.
+- Some scripts depend on the external `Euclid_DINOv2_VIT` codebase (`euclid_dino.*` imports). Keep that package available in the Python path when running locally.
 
-```bash
-python retrieval/gz_similarity_search_improved_official_dinov2_fixed.py
-```
+## Citation
 
----
+If you use this project, please cite the associated paper and the upstream resources:
+- Euclid Q1 data products
+- Galaxy Zoo Euclid (Q1)
+- DINOv2
+- NADC Euclid cutout service
 
-## 🧪 Scientific Contributions
-
-This project is **not just an application**, but a **methodology**:
-
-### ✔ AI-ready data pipeline
-
-* Standardized image extraction
-* Scalable preprocessing
-* Reproducible workflow
-
-### ✔ Representation-first paradigm
-
-* Separate representation learning from tasks
-* Enable reuse across scientific problems
-
-### ✔ Minimal-label science
-
-* High performance with only 1% labels
-
-### ✔ Survey-scale analysis
-
-* Works on hundreds of thousands of galaxies
-
----
-
-## ⚠️ Limitations
-
-* Domain-specific SSL model may collapse
-* Performance depends on image quality
-* Some rare morphologies underrepresented
-
----
-
-## 📜 Citation
-
-If you use this work, please cite:
-
-```
-@article{euclid_ai_ready_2026,
-  title={Making Euclid VIS Imaging AI-Ready},
-  author={Xie et al.},
-  journal={ApJS},
-  year={2026}
-}
-```
-
----
-
-## 🤝 Acknowledgements
-
-* Euclid Consortium
-* Galaxy Zoo
-* National Astronomical Data Center (NADC)
-* DINOv2 (Meta AI)
-
----
-
-## 🌌 Final Remark
-
-This work demonstrates that:
-
-> We do not need to build new models for every task.
-> We need better representations.
-
-And once the representation is right—
-
-everything else becomes easier.

@@ -127,13 +127,13 @@ Nearest-neighbor retrieval in embedding space:
 ```
 Making-Euclid-VIS-Imaging-AI-Ready/
 ├── analyze_embedding/
-│   └── gz_analyze_embedding_morphology_regression_official_v1.py
+│   └── gz_analyze_embedding_morphology_regression.py
 ├── downstream_application/
-│   └── gz_analyze_embedding_fullplots_highdim_lof_linear_probe_official_dinov2.py
-│   └── gz_run_fewlabel_benchmark_fixed_loading_official_dinov2_v2_diagnostics_mlp.py
-│   └── gz_similarity_search_improved_official_dinov2_fixed.py
+│   └── gz_analyze_embedding_fullplots_highdim_lof_linear_probe_dinov2.py
+│   └── gz_run_fewlabel_benchmark_fixed_loading_official_dinov2_diagnostics_mlp.py
+│   └── gz_similarity_search_dinov2.py
 ├── labels/
-│   └── hard_labels.py
+│   └── gz_hard_quality_labels.py
 ├── models/
 │   └── download_official_dinov2_backbone.py
 ├── outputs/
@@ -167,7 +167,7 @@ python models/download_official_dinov2_backbone.py
 ### 2. Build embedding + UMAP + regression
 
 ```bash
-python analyze_embedding/gz_analyze_embedding_morphology_regression_official_v1.py
+python analyze_embedding/gz_analyze_embedding_morphology_regression.py
 ```
 
 ---
@@ -175,18 +175,28 @@ python analyze_embedding/gz_analyze_embedding_morphology_regression_official_v1.
 ### 3. Few-label benchmark
 
 ```bash
-python benchmark/gz_run_fewlabel_benchmark_fixed_loading_official_dinov2_v2_diagnostics_mlp.py
+python labels/gz_hard_quality_labels.py
+python downstream_application/gz_run_fewlabel_benchmark_fixed_loading_dinov2_diagnostics_mlp.py
 ```
 
 ---
 
-### 4. Similarity search
+### 4. Anomaly detection
 
 ```bash
-python retrieval/gz_similarity_search_improved_official_dinov2_fixed.py
+python downstream_application/gz_analyze_embedding_fullplots_highdim_lof_linear_probe_dinov2_.py
 ```
 
 ---
+
+### 5. Similarity search
+
+```bash
+python downstream_application/gz_similarity_search_dinov2.py
+```
+
+---
+
 
 ## 🧪 Scientific Contributions
 

@@ -136,6 +136,7 @@ Making-Euclid-VIS-Imaging-AI-Ready/
 │   └── gz_hard_quality_labels.py
 ├── models/
 │   └── download_official_dinov2_backbone.py
+│   └── run_training_Euclid_SSL.py
 ├── outputs/
 ├── README.md
 └── requirements.txt
@@ -176,6 +177,7 @@ python analyze_embedding/gz_analyze_embedding_morphology_regression.py
 
 ```bash
 python labels/gz_hard_quality_labels.py
+python models/run_training_Euclid_SSL.py
 python downstream_application/gz_run_fewlabel_benchmark_fixed_loading_dinov2_diagnostics_mlp.py
 ```
 

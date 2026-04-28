@@ -250,7 +250,7 @@ If you use this work, please cite:
 
 ## 🤝 Acknowledgements
 
-* Euclid Consortium
+* Euclid Collaboration
 * Galaxy Zoo
 * National Astronomical Data Center (NADC)
 * DINOv2 (Meta AI)
